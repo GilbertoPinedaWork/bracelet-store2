@@ -148,12 +148,13 @@ function Builder({ addToBag }) {
   const s = STYLES.find((x) => x.id === style)
   const c = CHARMS.find((x) => x.id === charm)
   const total = m.price + s.price + c.price
+  const letter = initial || 'A'
 
   const add = () =>
     addToBag({
-      key: `custom-${material}-${style}-${size}-${charm}-${charm === 'initial' ? initial : ''}`,
+      key: `custom-${material}-${style}-${size}-${charm}-${charm === 'initial' ? letter : ''}`,
       name: 'Custom bracelet',
-      detail: `${m.label}, ${s.label}, size ${size}${charm !== 'none' ? `, ${c.label.toLowerCase()} charm${charm === 'initial' ? ` ${initial}` : ''}` : ''}`,
+      detail: `${m.label}, ${s.label}, size ${size}${charm !== 'none' ? `, ${c.label.toLowerCase()} charm${charm === 'initial' ? ` ${letter}` : ''}` : ''}`,
       price: total,
     })
 
@@ -162,7 +163,7 @@ function Builder({ addToBag }) {
       <h1>Build your own</h1>
       <div className="build-layout">
         <div className="preview">
-          <Bracelet color={m.color} style={style} charm={charm} initial={initial} />
+          <Bracelet color={m.color} style={style} charm={charm} initial={letter} />
           <p className="total">{money(total)}</p>
           <button className="btn" onClick={add}>Add to bag</button>
         </div>
@@ -194,7 +195,12 @@ function Builder({ addToBag }) {
             ))}
             {charm === 'initial' && (
               <label className="field inline">Letter
-                <input maxLength={1} value={initial} onChange={(e) => setInitial((e.target.value || 'A').toUpperCase())} />
+                <input
+                  value={initial}
+                  aria-label="Initial letter"
+                  onFocus={(e) => e.target.select()}
+                  onChange={(e) => setInitial(e.target.value.slice(-1).toUpperCase())}
+                />
               </label>
             )}
           </Step>
